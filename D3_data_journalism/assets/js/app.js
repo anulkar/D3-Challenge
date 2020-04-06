@@ -26,20 +26,20 @@ var chartGroup = svg.append("g")
 // Import Census Data from csv
 d3.csv("assets/data/data.csv").then(function(censusData) {
 
-     // Parse and Cast data
+    // Parse and Cast data
     censusData.forEach(function(data) {
         data.healthcare = +data.healthcare;
         data.poverty = +data.poverty;
       });
-  
+
     // Create scale functions
     var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(censusData, d => d.poverty) - 1, d3.max(censusData, d => d.poverty) + 0.5])
-    .range([0, width]);
+        .domain([d3.min(censusData, d => d.poverty) - 1, d3.max(censusData, d => d.poverty) + 0.5])
+        .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(censusData, d => d.healthcare) - 2, d3.max(censusData, d => d.healthcare) + 2])
-    .range([height, 0]);
+        .domain([d3.min(censusData, d => d.healthcare) - 2, d3.max(censusData, d => d.healthcare) + 2])
+        .range([height, 0]);
 
     // Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -47,11 +47,11 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
 
     // Append Axes to the chart
     chartGroup.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(bottomAxis);
+        .attr("transform", `translate(0, ${height})`)
+        .call(bottomAxis);
 
     chartGroup.append("g")
-    .call(leftAxis);
+        .call(leftAxis);
 
     // Create scatter point circles
     chartGroup.selectAll("circle")
@@ -60,21 +60,23 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
         .append("circle")
         .attr("cx", d => xLinearScale(d.poverty))
         .attr("cy", d => yLinearScale(d.healthcare))
-        .attr("r", "10")
-        .attr("fill", "skyblue")
-        .attr("stroke", "black")
-        .attr("opacity");
-
+        .attr("r", "15")
+        .attr("fill", "orange")
+        .attr("opacity", "0.6");
+    
     // Add State abbreviation as label for each scatter point 
-    chartGroup.selectAll("text")
+    chartGroup.selectAll(".scatterLabel")
         .data(censusData)
         .enter()
-        .append("text").text(d => d.abbr)
+        .append("text")
+        .attr("class", "scatterLabel")
+        .text(d => d.abbr)
         .attr("x", d => xLinearScale(d.poverty))
         .attr("y", d => yLinearScale(d.healthcare))
         .attr("font-size", "8px")
         .attr("font-weight", "bold")
         .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
         .attr("fill", "black");
 
     // Create y-axis label
