@@ -26,13 +26,10 @@ var chartGroup = svg.append("g")
 // Import Census Data from csv
 d3.csv("assets/data/data.csv").then(function(censusData) {
 
-    console.log(censusData);
-    
      // Parse and Cast data
     censusData.forEach(function(data) {
         data.healthcare = +data.healthcare;
         data.poverty = +data.poverty;
-        data.abbr = data.abbr.toString();
       });
   
     // Create scale functions
@@ -57,7 +54,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
     .call(leftAxis);
 
     // Create scatter point circles
-    var circlesGroup = chartGroup.selectAll("circle")
+    chartGroup.selectAll("circle")
         .data(censusData)
         .enter()
         .append("circle")
@@ -65,6 +62,7 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
         .attr("cy", d => yLinearScale(d.healthcare))
         .attr("r", "10")
         .attr("fill", "skyblue")
+        .attr("stroke", "black")
         .attr("opacity");
 
     // Add State abbreviation as label for each scatter point 
