@@ -5,7 +5,7 @@ var margin = {
   top: 20,
   right: 40,
   bottom: 80,
-  left: 60
+  left: 100
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -25,18 +25,28 @@ var chartGroup = svg.append("g")
 
 // Initial Params
 var chosenXAxis = "poverty";
+var chosenYAxis = "healthcare";
 
-// Function used for updating x-scale var upon click on axis label
+// Function used for updating x-axis scale upon clicking on the chosen x-axis label
 function xScale(censusData, chosenXAxis) {
 
     // Create x-axis scale
     var xLinearScale = d3.scaleLinear()
-      .domain([d3.min(censusData, d => d[chosenXAxis]) * 0.8,
-        d3.max(censusData, d => d[chosenXAxis]) * 1.2
-      ])
+      .domain([d3.min(censusData, d => d[chosenXAxis]) - 1, d3.max(censusData, d => d[chosenXAxis]) + 2])
       .range([0, width]);
   
     return xLinearScale;
+}
+
+// Function used for updating y-axis scale upon clicking on the chosen y-axis label
+function yScale(censusData, chosenYAxis) {
+
+    // Create y-axis scale
+    var yLinearScale = d3.scaleLinear()
+        .domain([d3.min(censusData, d => d.healthcare) - 2, d3.max(censusData, d => d.healthcare) + 2])
+        .range([height, 0]);
+  
+    return yLinearScale;
 }
 
 // Function used for updating xAxis var upon click on axis label
@@ -106,16 +116,17 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         data.obesity = +data.obesity;
       });
 
-    // Create scale function based on default chosen x-axis defined
+    // Create scale functions based on default chosen x & y-axis defined
     var xLinearScale = xScale(censusData, chosenXAxis);
+    var yLinearScale = yScale(censusData, chosenYAxis);
 
     // var xLinearScale = d3.scaleLinear()
     //     .domain([d3.min(censusData, d => d.poverty) - 1, d3.max(censusData, d => d.poverty) + 0.5])
     //     .range([0, width]);
 
-    var yLinearScale = d3.scaleLinear()
-        .domain([d3.min(censusData, d => d.healthcare) - 2, d3.max(censusData, d => d.healthcare) + 2])
-        .range([height, 0]);
+    // var yLinearScale = d3.scaleLinear()
+    //     .domain([d3.min(censusData, d => d.healthcare) - 2, d3.max(censusData, d => d.healthcare) + 2])
+    //     .range([height, 0]);
 
     // Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -142,30 +153,67 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         .attr("fill", "orange")
         .attr("opacity", "0.6");
     
-    // Create group for  2 x-axis labels
-    var labelsGroup = chartGroup.append("g")
+    // Create group for 3 x-axis labels
+    var xLabelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-    var povertyLabel = labelsGroup.append("text")
+    // Create x-axis label for Poverty
+    var povertyLabel = xLabelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 20)
         .attr("value", "poverty") // value to grab for event listener
         .classed("active", true)
         .text("In Poverty (%)");
     
-    var ageLabel= labelsGroup.append("text")
+    // Create x-axis label for Median Age
+    var ageLabel= xLabelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 40)
         .attr("value", "age") // value to grab for event listener
         .classed("inactive", true)
         .text("Age (Median)");
     
-    var incomeLabel= labelsGroup.append("text")
+    // Create x-axis label for Median Household Income
+    var incomeLabel= xLabelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 60)
         .attr("value", "income") // value to grab for event listener
         .classed("inactive", true)
         .text("Household Income (Median)");
+
+    // Create group for 3 y-axis labels
+    // var yLabelsGroup = chartGroup.append("g")
+    //     .attr("transform", "rotate(-90)");
+
+    // Create y-axis label for Healthcare
+    var healthCareLabel = chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 60 - margin.left)
+        .attr("x", 0 - (height / 2))
+        // .attr("dy", "1em")
+        .attr("value", "healthcare") // value to grab for event listener
+        .classed("active", true)
+        .text("Lacks Healthcare (%)")
+    
+    // Create y-axis label for Healthcare
+    var smokesLabel = chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 40 - margin.left)
+        .attr("x", 0 - (height / 2))
+        // .attr("dy", "1em")
+        .attr("value", "smokes") // value to grab for event listener
+        .classed("inactive", true)
+        .text("Smokes (%)")
+
+    // Create y-axis label for Healthcare
+    var obesityLabel = chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 20 - margin.left)
+        .attr("x", 0 - (height / 2))
+        // .attr("dy", "1em")
+        .attr("value", "obesity") // value to grab for event listener
+        .classed("inactive", true)
+        .text("Obese (%)")
     
     // Add State abbreviation as label for each scatter point 
     chartGroup.selectAll(".scatterLabel")
@@ -181,16 +229,6 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .attr("fill", "black");
-
-    // Create y-axis label
-    chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left)
-        .attr("x", 0 - (height / 1.5))
-        .attr("dy", "1em")
-        .attr("class", "axisText")
-        .text("Lacks Healthcare %")
-        .attr("font-weight", "bold");
 
     // Create x-axis label
     // chartGroup.append("text")
