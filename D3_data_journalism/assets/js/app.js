@@ -234,7 +234,68 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
     // updateToolTip function above csv import
     var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
-    }).catch(function(error) {
-        console.log(error);
+    // x-axis labels event listener
+    xLabelsGroup.selectAll("text")
+        .on("click", function() {
 
-});
+            // get value of selection
+            var value = d3.select(this).attr("value");
+            if (value !== chosenXAxis) {
+                // replaces chosenXAxis with value
+                console.log(value, chosenXAxis);
+                chosenXAxis = value;
+
+                // functions here found above csv import
+                // updates x scale for new data
+                xLinearScale = xScale(censusData, chosenXAxis);
+
+                // updates x axis with transition
+                xAxis = renderAxes(xLinearScale, xAxis);
+
+                // updates circles with new x values
+                circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+
+                // updates tooltips with new info
+                circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+
+                // changes classes to change bold text
+                switch (chosenXAxis) {
+                    case "age":
+                        ageLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
+                        povertyLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        incomeLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        break;
+                    case "income":
+                        incomeLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
+                        ageLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        povertyLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        break;
+                    default: // default is Poverty
+                        povertyLabel
+                        .classed("active", true)
+                        .classed("inactive", false); 
+                        ageLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        incomeLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                }
+            }
+        });
+
+}).catch(function(error) {
+        console.log(error);
+    });
