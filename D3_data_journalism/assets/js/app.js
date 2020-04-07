@@ -182,35 +182,29 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         .text("Household Income (Median)");
 
     // Create group for 3 y-axis labels
-    // var yLabelsGroup = chartGroup.append("g")
-    //     .attr("transform", "rotate(-90)");
+    var yLabelsGroup = chartGroup.append("g")
+        .attr("transform", "rotate(-90)");
 
     // Create y-axis label for Healthcare
-    var healthCareLabel = chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
+    var healthCareLabel = yLabelsGroup.append("text")
         .attr("y", 60 - margin.left)
         .attr("x", 0 - (height / 2))
-        // .attr("dy", "1em")
         .attr("value", "healthcare") // value to grab for event listener
         .classed("active", true)
         .text("Lacks Healthcare (%)")
     
     // Create y-axis label for Healthcare
-    var smokesLabel = chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
+    var smokesLabel = yLabelsGroup.append("text")
         .attr("y", 40 - margin.left)
         .attr("x", 0 - (height / 2))
-        // .attr("dy", "1em")
         .attr("value", "smokes") // value to grab for event listener
         .classed("inactive", true)
         .text("Smokes (%)")
 
     // Create y-axis label for Healthcare
-    var obesityLabel = chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
+    var obesityLabel = yLabelsGroup.append("text")
         .attr("y", 20 - margin.left)
         .attr("x", 0 - (height / 2))
-        // .attr("dy", "1em")
         .attr("value", "obesity") // value to grab for event listener
         .classed("inactive", true)
         .text("Obese (%)")
