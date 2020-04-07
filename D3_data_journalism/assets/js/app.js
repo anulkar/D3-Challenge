@@ -70,6 +70,27 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
     return circlesGroup;
 }
 
+// Function used for adding State abbreviation labels to the scatter plot circles 
+function renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale) {
+
+    // Add State abbreviation as label for each scatter point 
+    circlesGroup.selectAll(".scatterLabel")
+        .data(censusData)
+        .enter()
+        .append("text")
+        .attr("class", "scatterLabel")
+        .text(d => d.abbr)
+        .attr("x", d => xLinearScale(d[chosenXAxis]))
+        .attr("y", d => yLinearScale(d[chosenYAxis]))
+        .attr("font-size", "8px")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
+        .attr("fill", "black");
+    
+    return circlesGroup;
+}
+
 // Function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, circlesGroup) {
 
@@ -239,6 +260,9 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
 
                 // updates circles with new x values
                 circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+
+                // add state abbreviations to circle labels
+                circlesGroup = renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
 
                 // updates tooltips with new info
                 circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
