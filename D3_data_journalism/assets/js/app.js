@@ -32,7 +32,7 @@ function xScale(censusData, chosenXAxis) {
 
     // Create x-axis scale
     var xLinearScale = d3.scaleLinear()
-      .domain([d3.min(censusData, d => d[chosenXAxis]) - 1, d3.max(censusData, d => d[chosenXAxis]) + 2])
+      .domain([d3.min(censusData, d => d[chosenXAxis]) * 0.9, d3.max(censusData, d => d[chosenXAxis]) * 1.1])
       .range([0, width]);
   
     return xLinearScale;
@@ -236,9 +236,9 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .attr("fill", "black");
-
+    
     // updateToolTip function above csv import
-    var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+    circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
     // x-axis labels event listener
     xLabelsGroup.selectAll("text")
@@ -248,7 +248,6 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
             var value = d3.select(this).attr("value");
             if (value !== chosenXAxis) {
                 // replaces chosenXAxis with value
-                console.log(value, chosenXAxis);
                 chosenXAxis = value;
 
                 // functions here found above csv import
