@@ -50,7 +50,7 @@ function yScale(censusData, chosenYAxis) {
 }
 
 // Function used for updating xAxis var upon click on axis label
-function renderAxes(newXScale, xAxis) {
+function renderXAxes(newXScale, xAxis) {
     var bottomAxis = d3.axisBottom(newXScale);
   
     xAxis.transition()
@@ -59,13 +59,34 @@ function renderAxes(newXScale, xAxis) {
   
     return xAxis;
 }
+
+// Function used for updating yAxis var upon click on axis label
+function renderYAxes(newYScale, yAxis) {
+    var leftAxis = d3.axisLeft(newYScale);
   
-// Function used for updating circles group with a transition to new circles
-function renderCircles(circlesGroup, newXScale, chosenXAxis) {
+    xAxis.transition()
+      .duration(1000)
+      .call(leftAxis);
+  
+    return yAxis;
+}
+  
+// Function used for updating X-axis circles group with a transition to new circles
+function renderCirclesXAxis(circlesGroup, newXScale, chosenXAxis) {
 
     circlesGroup.transition()
         .duration(1000)
         .attr("cx", d => newXScale(d[chosenXAxis]));
+
+    return circlesGroup;
+}
+
+// Function used for updating Y-axis circles group with a transition to new circles
+function renderCirclesYAxis(circlesGroup, newYScale, chosenYAxis) {
+
+    circlesGroup.transition()
+        .duration(1000)
+        .attr("cx", d => newYScale(d[chosenYAxis]));
 
     return circlesGroup;
 }
@@ -255,10 +276,10 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
                 xLinearScale = xScale(censusData, chosenXAxis);
 
                 // updates x axis with transition
-                xAxis = renderAxes(xLinearScale, xAxis);
+                xAxis = renderXAxes(xLinearScale, xAxis);
 
                 // updates circles with new x values
-                circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+                circlesGroup = renderCirclesXAxis(circlesGroup, xLinearScale, chosenXAxis);
 
                 // add state abbreviations to circle labels
                 circlesGroup = renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
@@ -298,6 +319,69 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
                         .classed("active", false)
                         .classed("inactive", true);
                         incomeLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                }
+            }
+        });
+    
+    yLabelsGroup.selectAll("text")
+        .on("click", function() {
+
+            // get value of selection
+            var value = d3.select(this).attr("value");
+            if (value !== chosenYAxis) {
+                // replaces chosenYAxis with value
+                chosenYAxis = value;
+
+                // functions here found above csv import
+                // updates y-scale for new data
+                yLinearScale = yScale(censusData, chosenYAxis);
+
+                // updates y-axis with transition
+                yAxis = renderYAxes(yLinearScale, yAxis);
+
+                // updates circles with new x values
+                circlesGroup = renderCirclesYAxis(circlesGroup, yLinearScale, chosenYAxis);
+
+                // add state abbreviations to circle labels
+                circlesGroup = renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
+
+                // updates tooltips with new info
+                circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+
+                // changes classes to change bold text
+                switch (chosenYAxis) {
+                    case "smokes":
+                        smokesLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
+                        healthCareLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        obesityLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        break;
+                    case "obesity":
+                        obesityLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
+                        smokesLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        healthCareLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        break;
+                    default: // default is Healthcare
+                        healthCareLabel
+                        .classed("active", true)
+                        .classed("inactive", false); 
+                        smokesLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                        obesityLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 }
