@@ -120,14 +120,6 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
     var xLinearScale = xScale(censusData, chosenXAxis);
     var yLinearScale = yScale(censusData, chosenYAxis);
 
-    // var xLinearScale = d3.scaleLinear()
-    //     .domain([d3.min(censusData, d => d.poverty) - 1, d3.max(censusData, d => d.poverty) + 0.5])
-    //     .range([0, width]);
-
-    // var yLinearScale = d3.scaleLinear()
-    //     .domain([d3.min(censusData, d => d.healthcare) - 2, d3.max(censusData, d => d.healthcare) + 2])
-    //     .range([height, 0]);
-
     // Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
@@ -223,13 +215,6 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .attr("fill", "black");
-
-    // Create x-axis label
-    // chartGroup.append("text")
-    //     .attr("transform", `translate(${width / 2.3}, ${height + margin.top + 30})`)
-    //     .attr("class", "axisText")
-    //     .text("In Poverty (%)")
-    //     .attr("font-weight", "bold");
 
     // updateToolTip function above csv import
     var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
