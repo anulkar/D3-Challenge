@@ -83,24 +83,14 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYA
 }
 
 // Function used for adding State abbreviation labels to the scatter plot circles 
-function renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale) {
-
-    // Add State abbreviation as label for each scatter point 
-    circlesGroup.selectAll(".scatterLabel")
-        .data(censusData)
-        .enter()
-        .append("text")
-        .attr("class", "scatterLabel")
-        .text(d => d.abbr)
-        .attr("x", d => xLinearScale(d[chosenXAxis]))
-        .attr("y", d => yLinearScale(d[chosenYAxis]))
-        .attr("font-size", "8px")
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .attr("fill", "black");
+function renderCircleLabels(circleLabels, chosenXAxis, newXScale, chosenYAxis, newYScale) {
     
-    return circlesGroup;
+    circleLabels.transition()
+        .duration(1000)
+        .attr("x", d => newXScale(d[chosenXAxis]))
+        .attr("y", d => newYScale(d[chosenYAxis]));
+        
+    return circleLabels;
 }
 
 // Function used for updating circles group with new tooltip
@@ -179,23 +169,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
 
     var yAxis = chartGroup.append("g")
         .classed("y-axis", true)
-        // .attr("transform", `translate(0, ${height})`)
         .call(leftAxis);
-
-    // chartGroup.append("g")
-    //     .call(leftAxis);
-
-    // Create scatter point circles
-    var circlesGroup = chartGroup.selectAll("circle")
-        .data(censusData)
-        .enter()
-        .append("circle")
-        // .attr("cx", d => xLinearScale(d.poverty))
-        .attr("cx", d => xLinearScale(d[chosenXAxis]))
-        .attr("cy", d => yLinearScale(d[chosenYAxis]))
-        .attr("r", "15")
-        .attr("fill", "orange")
-        .attr("opacity", "0.6");
     
     // Create group for 3 x-axis labels
     var xLabelsGroup = chartGroup.append("g")
@@ -253,21 +227,32 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
         .classed("inactive", true)
         .text("Obese (%)")
     
+    // Create scatter point circles
+    var circlesGroup = chartGroup.selectAll("circle")
+        .data(censusData)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xLinearScale(d[chosenXAxis]))
+        .attr("cy", d => yLinearScale(d[chosenYAxis]))
+        .attr("r", "15")
+        .attr("fill", "orange")
+        .attr("opacity", "0.5");
+
     // Add State abbreviation as label for each scatter point 
-    chartGroup.selectAll(".scatterLabel")
+    var circleLabels = chartGroup.selectAll(".circleLabel")
         .data(censusData)
         .enter()
         .append("text")
-        .attr("class", "scatterLabel")
+        .attr("class", "circleLabel")
         .text(d => d.abbr)
-        .attr("x", d => xLinearScale(d.poverty))
-        .attr("y", d => yLinearScale(d.healthcare))
-        .attr("font-size", "8px")
+        .attr("x", d => xLinearScale(d[chosenXAxis]))
+        .attr("y", d => yLinearScale(d[chosenYAxis]))
+        .attr("font-size", "10px")
         .attr("font-weight", "bold")
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .attr("fill", "black");
-    
+
     // update tooltips
     circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
@@ -291,7 +276,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
                 circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
                 // add state abbreviations to circle labels
-                circlesGroup = renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
+                circleLabels = renderCircleLabels(circleLabels, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
 
                 // updates tooltips with new info
                 circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
@@ -354,7 +339,7 @@ d3.csv("assets/data/data.csv").then(function(censusData, err) {
                 circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
                 // add state abbreviations to circle labels
-                circlesGroup = renderCircleLabels(circlesGroup, censusData, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
+                circleLabels = renderCircleLabels(circleLabels, chosenXAxis, xLinearScale, chosenYAxis, yLinearScale);
 
                 // updates tooltips with new info
                 circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
